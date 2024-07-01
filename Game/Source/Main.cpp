@@ -1,61 +1,75 @@
+#include "Renderer.h"
+#include "Vector2.h"
+
 #include <SDL.h>
 #include <iostream>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
-	// initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	Renderer renderer;
+	renderer.Initialize();
+	renderer.CreateWindow("Game Engine", 800, 600);
+	
+	Vector2 v1{ 400, 300 };
+	Vector2 v2{ 500, 400 };
+
+	std::vector<Vector2> points;
+	for (int i = 0; i < 100; i++)
 	{
-		std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
-		return 1;
+		points.push_back(Vector2{ rand() % 800, rand() % 600 });
 	}
 
-	// create window
-	// returns pointer to window if successful or nullptr if failed
-	SDL_Window* window = SDL_CreateWindow("Game Engine",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		800, 600,
-		SDL_WINDOW_SHOWN);
-	if (window == nullptr)
-	{
-		std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return 1;
-	}
-
-	// create renderer
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-
+	//main
 	while (true)
 	{
-		// clear screen
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-		SDL_RenderClear(renderer);
+		// input
+		// update
+		// draw
+		
+		// UPDATE
+		Vector2 speed{ 0.1f, -0.1f };
+		for (Vector2& point : points)
+		{
+			point = point + 0.02f;
+		}
 
-		// draw line
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-		SDL_RenderDrawLine(renderer, 400, 150, 500, 450);
-		SDL_RenderDrawLine(renderer, 500, 450, 250, 250);
-		SDL_RenderDrawLine(renderer, 250, 250, 550, 250);
-		SDL_RenderDrawLine(renderer, 550, 250, 300, 450);
-		SDL_RenderDrawLine(renderer, 300, 450, 400, 150);
+
+		// DRAW
+		// clear screen
+		renderer.SetColor(0, 0, 0, 0);
+		renderer.BeginFrame();
+		
+		// draw shape 
+		renderer.SetColor(255, 255, 255, 0); 
+		renderer.DrawLine(400, 150, 500, 450);
+		renderer.DrawLine(500, 450, 250, 250);
+		renderer.DrawLine(250, 250, 550, 250);
+		renderer.DrawLine(550, 250, 300, 450);
+		renderer.DrawLine(300, 450, 400, 150);
+		renderer.DrawLine(v1.x, v1.y, v2.x, v2.y);
+
+		for (int i = 0; i < points.size() - 1; i++)
+		{
+			renderer.DrawLine(points[i], points[i + 1]);
+		}
 
 		// random lines
 		for (int i = 0; i < rand() % 300; i++)
 		{
-			SDL_SetRenderDrawColor(renderer, rand() % 256, rand() % 256, rand() % 256, 0);
-			SDL_RenderDrawLine(renderer, rand() % 800, rand() % 600, rand() % 800, rand() % 600);
+			renderer.SetColor(rand() % 256, rand() % 256, rand() % 256, 0);
+			renderer.DrawLine(rand() % 800, rand() % 600, rand() % 800, rand() % 600);
 		}
 
 		// random dots
 		for (int i = 0; i < rand() % 5000; i++)
 		{
-			SDL_SetRenderDrawColor(renderer, rand() % 256, rand() % 256, rand() % 256, 0);
-			SDL_RenderDrawPoint(renderer, rand() % 800, rand() % 600);
+			renderer.SetColor(rand() % 256, rand() % 256, rand() % 256, 0);
+			renderer.DrawPoint(rand() % 800, rand() % 600);
 		}
 
 		// show screen
-		SDL_RenderPresent(renderer);
+		renderer.EndFrame();
 	}
 
 	return 0;
