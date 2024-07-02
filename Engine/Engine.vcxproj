@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Input.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
