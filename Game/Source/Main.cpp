@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 		{
 			uint8_t r{ (uint8_t)random(256) }, g{ (uint8_t)random(256) }, b{ (uint8_t)random(256) }, a{ (uint8_t)random(256) };
 			for (int i = 0; i < random(1000, 5000); i++) {
-				particles.push_back(Particle{ mousePosition, { randomf(-300, 300) , randomf(-300, 300) }, randomf(1), r, g, b, a });
+				particles.push_back(Particle{ mousePosition, { randomf(-300, 300) , randomf(-300, 300) }, randomf(2), r, g, b, a });
 			}
 		}
 
