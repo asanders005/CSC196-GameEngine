@@ -47,5 +47,8 @@
     <ClInclude Include="Source\ETime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mathutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

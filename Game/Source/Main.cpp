@@ -4,8 +4,10 @@
 #include "Particle.h"
 #include "Random.h"
 #include "ETime.h"
+#include "Mathutils.h"
 
 #include <SDL.h>
+#include <fmod.hpp>
 #include <iostream>
 #include <vector>
 #include <time.h>
@@ -20,9 +22,34 @@ int main(int argc, char* argv[])
 	Input input;
 	input.Initialize();
 
+	// create audio system
+	FMOD::System* audio;
+	FMOD::System_Create(&audio);
+
+	void* extradriverdata = nullptr;
+	audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
+
 	Time etime;
 
 	std::vector<Particle> particles;
+
+	FMOD::Sound* sound = nullptr;
+	std::vector<FMOD::Sound*> sounds;
+
+	audio->createSound("cowbell.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+	audio->createSound("open-hat.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+	audio->createSound("close-hat.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+	audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+	audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+	audio->createSound("clap.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+	
+	float offset = 0;
 
 	srand(time(0));
 		
@@ -34,11 +61,38 @@ int main(int argc, char* argv[])
 		//std::cout << time.GetTime() << std::endl;
 		
 		// INPUT
+		audio->update();
+
 		input.Update();
 
 		if (input.GetKeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			quit = true;
+		}
+
+		if (input.GetKeyPressed(SDL_SCANCODE_W))
+		{
+			audio->playSound(sounds[0], 0, false, nullptr);
+		}
+		if (input.GetKeyPressed(SDL_SCANCODE_E))
+		{
+			audio->playSound(sounds[1], 0, false, nullptr);
+		}
+		if (input.GetKeyPressed(SDL_SCANCODE_R))
+		{
+			audio->playSound(sounds[2], 0, false, nullptr);
+		}
+		if (input.GetKeyPressed(SDL_SCANCODE_U))
+		{
+			audio->playSound(sounds[3], 0, false, nullptr);
+		}
+		if (input.GetKeyPressed(SDL_SCANCODE_I))
+		{
+			audio->playSound(sounds[4], 0, false, nullptr);
+		}
+		if (input.GetKeyPressed(SDL_SCANCODE_O))
+		{
+			audio->playSound(sounds[5], 0, false, nullptr);
 		}
 		
 		// UPDATE
@@ -47,7 +101,7 @@ int main(int argc, char* argv[])
 		{
 			uint8_t r{ (uint8_t)random(256) }, g{ (uint8_t)random(256) }, b{ (uint8_t)random(256) }, a{ (uint8_t)random(256) };
 			for (int i = 0; i < random(1000, 5000); i++) {
-				particles.push_back(Particle{ mousePosition, { randomf(-300, 300) , randomf(-300, 300) }, randomf(2), r, g, b, a });
+				particles.push_back(Particle{ mousePosition, randomOnUnitCircle() * randomf(300), randomf(1), r, g, b, a});
 			}
 		}
 
@@ -62,9 +116,18 @@ int main(int argc, char* argv[])
 		renderer.SetColor(0, 0, 0, 0);
 		renderer.BeginFrame();
 		
+		renderer.SetColor(255, 255, 255, 0);
+		float radius = 100;
+		offset += (90 * etime.GetDeltaTime());
+		for (float angle = 0; angle < 360; angle += 360 / 90)
+		{
+			Vector2 v{ Math::Cos(Math::DegToRad(angle + offset)) * Math::Sin((offset + angle) * 0.1f) * radius, Math::Sin(Math::DegToRad(angle + offset)) * Math::Sin((offset + angle) * 0.1f) * radius };
+			renderer.SetColor((uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256));
+			renderer.DrawRect(400 - v.x, 300 - v.y, 5.0f, 5.0f);
+		}
+
 		for (Particle p : particles)
 		{
-			renderer.SetColor(p.r, p.g, p.b, p.a);
 			p.Draw(renderer);
 		}
 

@@ -22,6 +22,10 @@ public:
 	void DrawPoint(int x, int y);
 	void DrawPoint(float x, float y);
 	void DrawPoint(Vector2 v);
+	void DrawRect(int x, int y, int w, int h);
+	void DrawRect(float x, float y, float w, float h);
+	void DrawRect(Vector2 v, float w, float h);
+
 
 private:
 	SDL_Window* m_window;
