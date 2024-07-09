@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Color.h" />
     <ClInclude Include="Source\ETime.h" />
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\Mathutils.h" />
+    <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\Particle.h" />
     <ClInclude Include="Source\Random.h" />
     <ClInclude Include="Source\Renderer.h" />
@@ -30,6 +32,7 @@
   <ItemGroup>
     <ClCompile Include="Source\ETime.cpp" />
     <ClCompile Include="Source\Input.cpp" />
+    <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Particle.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
   </ItemGroup>
