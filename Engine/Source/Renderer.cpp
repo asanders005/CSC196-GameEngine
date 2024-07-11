@@ -19,6 +19,9 @@ void Renderer::Shutdown()
 
 bool Renderer::CreateWindow(std::string title, int width, int height)
 {
+	m_width = width;
+	m_height = height;
+
 	// create window
 	// returns pointer to window if successful or nullptr if failed
 	m_window = SDL_CreateWindow(title.c_str(),
@@ -51,6 +54,11 @@ void Renderer::EndFrame()
 void Renderer::SetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+}
+
+void Renderer::SetColor(Color c)
+{
+	SDL_SetRenderDrawColor(m_renderer, Color::ToInt(c.r), Color::ToInt(c.g), Color::ToInt(c.b), Color::ToInt(c.a));
 }
 
 void Renderer::DrawLine(int x1, int y1, int x2, int y2)

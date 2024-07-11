@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector2.h"
 #include <cmath>
 
 namespace Math 
@@ -36,4 +37,7 @@ namespace Math
 
 	template<typename T>
 	inline T Clamp(T v, T min, T max) { return (v < min) ? min : (v > max) ? max : v; }
+
+	inline int Wrap(int value, int max) { return value % max + ((value < 0) ? max : 0); }
+	inline float Wrap(float value, float max) { return std::fmodf(value, max) + ((value < 0) ? max : 0); }	
 }

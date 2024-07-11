@@ -24,11 +24,23 @@ struct Vector2
 	Vector2 operator * (float s) const { return Vector2{ x * s, y * s }; }
 	Vector2 operator / (float s) const { return Vector2{ x / s, y / s }; }
 
+	Vector2& operator += (const Vector2& v) { x += v.x; y += v.y; return *this; }
+	Vector2& operator -= (const Vector2& v) { x -= v.x; y -= v.y; return *this; }
+	Vector2& operator *= (const Vector2& v) { x *= v.x; y *= v.y; return *this; }
+	Vector2& operator /= (const Vector2& v) { x /= v.x; y /= v.y; return *this; }
+
+	Vector2& operator += (float s) { x += s; y += s; return *this; }
+	Vector2& operator -= (float s) { x -= s; y -= s; return *this; }
+	Vector2& operator *= (float s) { x *= s; y *= s; return *this; }
+	Vector2& operator /= (float s) { x /= s; y /= s; return *this; }
+
 	float LengthSqr() const { return (x * x) + (y * y); }
 	float Length() const { return Math::Sqrt((x * x) + (y * y)); }
 
 	float Angle() const { return Math::Atan2(y, x); }
 	Vector2 Rotate(float radians) const;
+
+	static Vector2 Wrap(const Vector2& v, const Vector2& max) { return Vector2{ Math::Wrap(v.x, max.x), Math::Wrap(v.y, max.y) }; }
 };
 
 inline Vector2 Vector2::Rotate(float radians) const
@@ -38,3 +50,4 @@ inline Vector2 Vector2::Rotate(float radians) const
 
 	return { x_, y_ };
 }
+

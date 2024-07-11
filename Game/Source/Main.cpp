@@ -6,6 +6,7 @@
 #include "ETime.h"
 #include "Mathutils.h"
 #include "Model.h"
+#include "Transform.h"
 
 #include <SDL.h>
 #include <fmod.hpp>
@@ -52,15 +53,66 @@ int main(int argc, char* argv[])
 	
 	float offset = 0;
 
+	std::vector<std::vector<Vector2>> shapes;
 	std::vector<Vector2> points;
-	points.push_back(Vector2{ -5, -5 });
-	points.push_back(Vector2{ 5, -5 });
-	points.push_back(Vector2{ 0, 5 });
-	points.push_back(Vector2{ -5, -5 });
-	Model model{ points, Color{ 1, 0, 1, 1} };
-	Vector2 position{ 400, 300 };
-	float rotation = 0;
-
+	points.push_back(Vector2{ 11, 0 });
+	points.push_back(Vector2{ 8, 1 });
+	points.push_back(Vector2{ -3, 7 });
+	points.push_back(Vector2{ -4, 6 });
+	points.push_back(Vector2{ -2, 2 });
+	points.push_back(Vector2{ -9, 5 });
+	points.push_back(Vector2{ -9, 4 });
+	points.push_back(Vector2{ -8, 2 });
+	points.push_back(Vector2{ -11, 4 });
+	points.push_back(Vector2{ -11, 3 });
+	points.push_back(Vector2{ -9, 1 });
+	points.push_back(Vector2{ -9, -1 });
+	points.push_back(Vector2{ -11, -3 });
+	points.push_back(Vector2{ -11, -4 });
+	points.push_back(Vector2{ -8, -2 });
+	points.push_back(Vector2{ -9, -4 });
+	points.push_back(Vector2{ -9, -5 });
+	points.push_back(Vector2{ -2, -2 });
+	points.push_back(Vector2{ -4, -6 });
+	points.push_back(Vector2{ -3, -7 });
+	points.push_back(Vector2{ 8, -1 });
+	points.push_back(Vector2{ 11, 0 });
+	shapes.push_back(points);
+	points.clear();
+	points.push_back(Vector2{ 9, 0 });
+	points.push_back(Vector2{ 6, 1 });
+	points.push_back(Vector2{ 6, -1 });
+	points.push_back(Vector2{ 9, 0 });
+	shapes.push_back(points);
+	points.clear();
+	points.push_back(Vector2{ -2, 0 });
+	points.push_back(Vector2{ 3, 0 });
+	points.push_back(Vector2{ 4, 1 });
+	points.push_back(Vector2{ -1, 2 });
+	points.push_back(Vector2{ -2, 1 });
+	points.push_back(Vector2{ -2, -1 });
+	points.push_back(Vector2{ -1, -2 });
+	points.push_back(Vector2{ 4, -1 });
+	points.push_back(Vector2{ 3, 0 });
+	shapes.push_back(points);
+	points.clear();
+	points.push_back(Vector2{ -7, 1 });
+	points.push_back(Vector2{ -4, 0 });
+	points.push_back(Vector2{ -7, -1 });
+	points.push_back(Vector2{ -8, -1 });
+	points.push_back(Vector2{ -7, -2 });
+	points.push_back(Vector2{ -3, -1 });
+	points.push_back(Vector2{ -3, 1 });
+	points.push_back(Vector2{ -7, 2 });
+	points.push_back(Vector2{ -8, 1 });
+	points.push_back(Vector2{ -7, 1 });
+	points.push_back(Vector2{ -8, 0 });
+	points.push_back(Vector2{ -7, -1 });
+	shapes.push_back(points);
+	points.clear();
+	Model model{ shapes, Color{ 1, 0, 1 } };
+	Transform transform{ {renderer.GetWidth() / 2, renderer.GetHeight() / 2}, 0, 10};
+	
 	srand(time(0));
 		
 	// main
@@ -87,14 +139,18 @@ int main(int argc, char* argv[])
 		if (input.GetKeyPressed(SDL_SCANCODE_I)) audio->playSound(sounds[4], 0, false, nullptr);
 		if (input.GetKeyPressed(SDL_SCANCODE_O)) audio->playSound(sounds[5], 0, false, nullptr);
 
-		Vector2 velocity{ 0, 0 };
-		if (input.GetKeyDown(SDL_SCANCODE_LEFT)) velocity.x = -100;
-		if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) velocity.x = 100;
-		if (input.GetKeyDown(SDL_SCANCODE_UP)) velocity.y = -100;
-		if (input.GetKeyDown(SDL_SCANCODE_DOWN)) velocity.y = 100;
+		float thrust = 0;
+		if (input.GetKeyDown(SDL_SCANCODE_LEFT)) transform.rotation -= Math::DegToRad(120) * etime.GetDeltaTime();
+		if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) transform.rotation += Math::DegToRad(120) * etime.GetDeltaTime();
+		if (input.GetKeyDown(SDL_SCANCODE_UP)) thrust = 400;
+		// if (input.GetKeyDown(SDL_SCANCODE_DOWN)) thrust = -40;
 
-		position = position + (velocity * etime.GetDeltaTime());
-		rotation = velocity.Angle();
+		Vector2 velocity = Vector2{ thrust, 0.0f }.Rotate(transform.rotation);
+		transform.position += velocity * etime.GetDeltaTime();
+		transform.position = Vector2::Wrap(transform.position, { (float)renderer.GetWidth(), (float)renderer.GetHeight() });
+		/*transform.position.x = Math::Wrap(transform.position.x, (float)renderer.GetWidth());
+		transform.position.y = Math::Wrap(transform.position.y, (float)renderer.GetHeight());*/
+		//transform.rotation = velocity.Angle();
 		
 		// UPDATE
 		Vector2 mousePosition = input.GetMousePosition();
@@ -132,7 +188,7 @@ int main(int argc, char* argv[])
 			p.Draw(renderer);
 		}
 
-		model.Draw(renderer, position, rotation, 10);
+		model.Draw(renderer, transform);
 
 		renderer.EndFrame();
 	}
