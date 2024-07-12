@@ -1,28 +1,14 @@
-#include "Renderer.h"
-#include "Vector2.h"
-#include "Input.h"
-#include "Particle.h"
-#include "Random.h"
-#include "ETime.h"
-#include "Mathutils.h"
-#include "Model.h"
-#include "Transform.h"
+#include "Engine.h"
 
-#include <SDL.h>
-#include <fmod.hpp>
 #include <iostream>
 #include <vector>
 #include <time.h>
 
 int main(int argc, char* argv[])
 {
+	g_engine.Initialize();
 	// create systems
-	Renderer renderer;
-	renderer.Initialize();
-	renderer.CreateWindow("Game Engine", 800, 600);
 	
-	Input input;
-	input.Initialize();
 
 	// create audio system
 	FMOD::System* audio;
@@ -35,22 +21,13 @@ int main(int argc, char* argv[])
 
 	std::vector<Particle> particles;
 
-	FMOD::Sound* sound = nullptr;
-	std::vector<FMOD::Sound*> sounds;
-
-	audio->createSound("cowbell.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("open-hat.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("close-hat.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	audio->createSound("clap.wav", FMOD_DEFAULT, 0, &sound);
-	sounds.push_back(sound);
-	
+	/*AUDIO->AddSound("bass.wav");
+	AUDIO->AddSound("clap.wav");
+	AUDIO->AddSound("close-hat.wav");
+	AUDIO->AddSound("cowbell.wav");
+	AUDIO->AddSound("open-hat.wav");
+	AUDIO->AddSound("snare.wav");*/
+		
 	float offset = 0;
 
 	std::vector<std::vector<Vector2>> shapes;
@@ -111,10 +88,10 @@ int main(int argc, char* argv[])
 	shapes.push_back(points);
 	points.clear();
 	Model model{ shapes, Color{ 1, 0, 1 } };
-	Transform transform{ {renderer.GetWidth() / 2, renderer.GetHeight() / 2}, 0, 10};
+	Transform transform{ {RENDERER->GetWidth() / 2, RENDERER->GetHeight() / 2}, 0, 10};
 	
 	srand(time(0));
-		
+	
 	// main
 	bool quit = false;
 	while (!quit)
@@ -125,36 +102,36 @@ int main(int argc, char* argv[])
 		// INPUT
 		audio->update();
 
-		input.Update();
+		g_engine.GetInput()->Update();
 
-		if (input.GetKeyDown(SDL_SCANCODE_ESCAPE))
+		if (INPUT->GetKeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			quit = true;
 		}
 
-		if (input.GetKeyPressed(SDL_SCANCODE_W)) audio->playSound(sounds[0], 0, false, nullptr);
-		if (input.GetKeyPressed(SDL_SCANCODE_E)) audio->playSound(sounds[1], 0, false, nullptr);
-		if (input.GetKeyPressed(SDL_SCANCODE_R)) audio->playSound(sounds[2], 0, false, nullptr);
-		if (input.GetKeyPressed(SDL_SCANCODE_U)) audio->playSound(sounds[3], 0, false, nullptr);
-		if (input.GetKeyPressed(SDL_SCANCODE_I)) audio->playSound(sounds[4], 0, false, nullptr);
-		if (input.GetKeyPressed(SDL_SCANCODE_O)) audio->playSound(sounds[5], 0, false, nullptr);
+		if (INPUT->GetKeyPressed(SDL_SCANCODE_W)) AUDIO->PlaySound("cowbell.wav");
+		if (INPUT->GetKeyPressed(SDL_SCANCODE_E)) AUDIO->PlaySound("open-hat.wav");
+		if (INPUT->GetKeyPressed(SDL_SCANCODE_R)) AUDIO->PlaySound("cloSe-hat.wav");
+		if (INPUT->GetKeyPressed(SDL_SCANCODE_U)) AUDIO->PlaySound("snare.wav");
+		if (INPUT->GetKeyPressed(SDL_SCANCODE_I)) AUDIO->PlaySound("bass.wav");
+		if (INPUT->GetKeyPressed(SDL_SCANCODE_O)) AUDIO->PlaySound("clap.wav");
 
 		float thrust = 0;
-		if (input.GetKeyDown(SDL_SCANCODE_LEFT)) transform.rotation -= Math::DegToRad(120) * etime.GetDeltaTime();
-		if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) transform.rotation += Math::DegToRad(120) * etime.GetDeltaTime();
-		if (input.GetKeyDown(SDL_SCANCODE_UP)) thrust = 400;
+		if (INPUT->GetKeyDown(SDL_SCANCODE_LEFT)) transform.rotation -= Math::DegToRad(120) * etime.GetDeltaTime();
+		if (INPUT->GetKeyDown(SDL_SCANCODE_RIGHT)) transform.rotation += Math::DegToRad(120) * etime.GetDeltaTime();
+		if (INPUT->GetKeyDown(SDL_SCANCODE_UP)) thrust = 400;
 		// if (input.GetKeyDown(SDL_SCANCODE_DOWN)) thrust = -40;
 
 		Vector2 velocity = Vector2{ thrust, 0.0f }.Rotate(transform.rotation);
 		transform.position += velocity * etime.GetDeltaTime();
-		transform.position = Vector2::Wrap(transform.position, { (float)renderer.GetWidth(), (float)renderer.GetHeight() });
+		transform.position = Vector2::Wrap(transform.position, { (float)RENDERER->GetWidth(), (float)RENDERER->GetHeight() });
 		/*transform.position.x = Math::Wrap(transform.position.x, (float)renderer.GetWidth());
 		transform.position.y = Math::Wrap(transform.position.y, (float)renderer.GetHeight());*/
 		//transform.rotation = velocity.Angle();
 		
 		// UPDATE
-		Vector2 mousePosition = input.GetMousePosition();
-		if (input.GetMouseButtonPressed(0)) 
+		Vector2 mousePosition = INPUT->GetMousePosition();
+		if (INPUT->GetMouseButtonPressed(0)) 
 		{
 			uint8_t r{ (uint8_t)random(256) }, g{ (uint8_t)random(256) }, b{ (uint8_t)random(256) }, a{ (uint8_t)random(256) };
 			for (int i = 0; i < random(1000, 5000); i++) {
@@ -170,10 +147,10 @@ int main(int argc, char* argv[])
 		}
 
 		// DRAW
-		renderer.SetColor(0, 0, 0, 0);
-		renderer.BeginFrame();
+		RENDERER->SetColor(0, 0, 0, 0);
+		RENDERER->BeginFrame();
 		
-		renderer.SetColor(255, 255, 255, 0);
+		RENDERER->SetColor(255, 255, 255, 0);
 		float radius = 100;
 		offset += (90 * etime.GetDeltaTime());
 		/*for (float angle = 0; angle < 360; angle += 360 / 90)
@@ -185,12 +162,12 @@ int main(int argc, char* argv[])
 
 		for (Particle p : particles)
 		{
-			p.Draw(renderer);
+			p.Draw(*RENDERER);
 		}
 
-		model.Draw(renderer, transform);
+		model.Draw(*RENDERER, transform);
 
-		renderer.EndFrame();
+		RENDERER->EndFrame();
 	}
 
 	return 0;

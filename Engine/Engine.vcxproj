@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Audio.h" />
     <ClInclude Include="Source\Color.h" />
+    <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\ETime.h" />
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\Mathutils.h" />
@@ -31,6 +33,8 @@
     <ClInclude Include="Source\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Audio.cpp" />
+    <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\ETime.cpp" />
     <ClCompile Include="Source\Input.cpp" />
     <ClCompile Include="Source\Model.cpp" />
