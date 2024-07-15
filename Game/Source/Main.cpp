@@ -1,4 +1,6 @@
 #include "Engine.h"
+#include "Player.h"
+#include "Scene.h"
 
 #include <iostream>
 #include <vector>
@@ -21,12 +23,12 @@ int main(int argc, char* argv[])
 
 	std::vector<Particle> particles;
 
-	/*AUDIO->AddSound("bass.wav");
-	AUDIO->AddSound("clap.wav");
-	AUDIO->AddSound("close-hat.wav");
-	AUDIO->AddSound("cowbell.wav");
-	AUDIO->AddSound("open-hat.wav");
-	AUDIO->AddSound("snare.wav");*/
+	/*AUDIO.AddSound("bass.wav");
+	AUDIO.AddSound("clap.wav");
+	AUDIO.AddSound("close-hat.wav");
+	AUDIO.AddSound("cowbell.wav");
+	AUDIO.AddSound("open-hat.wav");
+	AUDIO.AddSound("snare.wav");*/
 		
 	float offset = 0;
 
@@ -87,9 +89,15 @@ int main(int argc, char* argv[])
 	points.push_back(Vector2{ -7, -1 });
 	shapes.push_back(points);
 	points.clear();
-	Model model{ shapes, Color{ 1, 0, 1 } };
-	Transform transform{ {RENDERER->GetWidth() / 2, RENDERER->GetHeight() / 2}, 0, 10};
+	Model* model = new Model{ shapes, Color{ 1, 0, 1 } };
+	Transform transform{ {RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2}, 0, 10 };
 	
+	Player* player = new Player(5, transform, model);
+	player->SetDamping(3.5f);
+
+	Scene* scene = new Scene();
+	scene->AddActor(player);
+
 	srand(time(0));
 	
 	// main
@@ -102,36 +110,25 @@ int main(int argc, char* argv[])
 		// INPUT
 		audio->update();
 
-		g_engine.GetInput()->Update();
+		INPUT.Update();
 
-		if (INPUT->GetKeyDown(SDL_SCANCODE_ESCAPE))
+		if (INPUT.GetKeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			quit = true;
 		}
 
-		if (INPUT->GetKeyPressed(SDL_SCANCODE_W)) AUDIO->PlaySound("cowbell.wav");
-		if (INPUT->GetKeyPressed(SDL_SCANCODE_E)) AUDIO->PlaySound("open-hat.wav");
-		if (INPUT->GetKeyPressed(SDL_SCANCODE_R)) AUDIO->PlaySound("cloSe-hat.wav");
-		if (INPUT->GetKeyPressed(SDL_SCANCODE_U)) AUDIO->PlaySound("snare.wav");
-		if (INPUT->GetKeyPressed(SDL_SCANCODE_I)) AUDIO->PlaySound("bass.wav");
-		if (INPUT->GetKeyPressed(SDL_SCANCODE_O)) AUDIO->PlaySound("clap.wav");
-
-		float thrust = 0;
-		if (INPUT->GetKeyDown(SDL_SCANCODE_LEFT)) transform.rotation -= Math::DegToRad(120) * etime.GetDeltaTime();
-		if (INPUT->GetKeyDown(SDL_SCANCODE_RIGHT)) transform.rotation += Math::DegToRad(120) * etime.GetDeltaTime();
-		if (INPUT->GetKeyDown(SDL_SCANCODE_UP)) thrust = 400;
-		// if (input.GetKeyDown(SDL_SCANCODE_DOWN)) thrust = -40;
-
-		Vector2 velocity = Vector2{ thrust, 0.0f }.Rotate(transform.rotation);
-		transform.position += velocity * etime.GetDeltaTime();
-		transform.position = Vector2::Wrap(transform.position, { (float)RENDERER->GetWidth(), (float)RENDERER->GetHeight() });
-		/*transform.position.x = Math::Wrap(transform.position.x, (float)renderer.GetWidth());
-		transform.position.y = Math::Wrap(transform.position.y, (float)renderer.GetHeight());*/
-		//transform.rotation = velocity.Angle();
+		/*if (INPUT.GetKeyPressed(SDL_SCANCODE_W)) AUDIO.PlaySound("cowbell.wav");
+		if (INPUT.GetKeyPressed(SDL_SCANCODE_E)) AUDIO.PlaySound("open-hat.wav");
+		if (INPUT.GetKeyPressed(SDL_SCANCODE_R)) AUDIO.PlaySound("close-hat.wav");
+		if (INPUT.GetKeyPressed(SDL_SCANCODE_U)) AUDIO.PlaySound("snare.wav");
+		if (INPUT.GetKeyPressed(SDL_SCANCODE_I)) AUDIO.PlaySound("bass.wav");
+		if (INPUT.GetKeyPressed(SDL_SCANCODE_O)) AUDIO.PlaySound("clap.wav");*/
 		
 		// UPDATE
-		Vector2 mousePosition = INPUT->GetMousePosition();
-		if (INPUT->GetMouseButtonPressed(0)) 
+		scene->Update(etime.GetDeltaTime());
+
+		Vector2 mousePosition = INPUT.GetMousePosition();
+		if (INPUT.GetMouseButtonPressed(0)) 
 		{
 			uint8_t r{ (uint8_t)random(256) }, g{ (uint8_t)random(256) }, b{ (uint8_t)random(256) }, a{ (uint8_t)random(256) };
 			for (int i = 0; i < random(1000, 5000); i++) {
@@ -147,10 +144,10 @@ int main(int argc, char* argv[])
 		}
 
 		// DRAW
-		RENDERER->SetColor(0, 0, 0, 0);
-		RENDERER->BeginFrame();
+		RENDERER.SetColor(0, 0, 0, 0);
+		RENDERER.BeginFrame();
 		
-		RENDERER->SetColor(255, 255, 255, 0);
+		RENDERER.SetColor(255, 255, 255, 0);
 		float radius = 100;
 		offset += (90 * etime.GetDeltaTime());
 		/*for (float angle = 0; angle < 360; angle += 360 / 90)
@@ -162,12 +159,12 @@ int main(int argc, char* argv[])
 
 		for (Particle p : particles)
 		{
-			p.Draw(*RENDERER);
+			p.Draw(RENDERER);
 		}
 
-		model.Draw(*RENDERER, transform);
+		scene->Draw(RENDERER);
 
-		RENDERER->EndFrame();
+		RENDERER.EndFrame();
 	}
 
 	return 0;
