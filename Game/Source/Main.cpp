@@ -90,10 +90,11 @@ int main(int argc, char* argv[])
 	shapes.push_back(points);
 	points.clear();
 	Model* model = new Model{ shapes, Color{ 1, 0, 1 } };
-	Transform transform{ {RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2}, 0, 10 };
+	Transform transform{ {RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2}, 0, 3 };
 	
-	Player* player = new Player(5, transform, model);
+	Player* player = new Player(3, transform, model);
 	player->SetDamping(3.5f);
+	player->SetRDamping(2.5f);
 
 	Scene* scene = new Scene();
 	scene->AddActor(player);
