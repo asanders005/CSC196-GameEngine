@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Player.h"
 #include "Scene.h"
+#include "Enemy.h"
 
 #include <iostream>
 #include <vector>
@@ -20,6 +21,8 @@ int main(int argc, char* argv[])
 	audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
 
 	Time etime;
+
+	Scene* scene = new Scene();
 
 	std::vector<Particle> particles;
 
@@ -92,12 +95,15 @@ int main(int argc, char* argv[])
 	Model* model = new Model{ shapes, Color{ 1, 0, 1 } };
 	Transform transform{ {RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2}, 0, 3 };
 	
-	Player* player = new Player(3, transform, model);
+	Player* player = new Player(3000, 5, transform, model);
 	player->SetDamping(3.5f);
 	player->SetRDamping(2.5f);
 
-	Scene* scene = new Scene();
 	scene->AddActor(player);
+
+	Model* eModel = new Model{ shapes, Color{ 1, 1, 0 } };
+	Enemy* enemy = new Enemy(2500, Transform{ {300, 300 }, 0, 2 }, eModel);
+	scene->AddActor(enemy);
 
 	srand(time(0));
 	

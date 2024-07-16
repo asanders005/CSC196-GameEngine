@@ -40,7 +40,16 @@ struct Vector2
 	float Angle() const { return Math::Atan2(y, x); }
 	Vector2 Rotate(float radians) const;
 
+	Vector2 Normalized() const { return *this / Length(); }
+
 	static Vector2 Wrap(const Vector2& v, const Vector2& max) { return Vector2{ Math::Wrap(v.x, max.x), Math::Wrap(v.y, max.y) }; }
+
+	static Vector2 Clamp(Vector2 v, Vector2 min, Vector2 max) 
+	{ 
+		v.x = (v.x < min.x) ? min.x : (v.x > max.x) ? max.x : v.x;
+		v.y = (v.y < min.y) ? min.y : (v.y > max.y) ? max.y : v.y;
+		return v;
+	}
 };
 
 inline Vector2 Vector2::Rotate(float radians) const

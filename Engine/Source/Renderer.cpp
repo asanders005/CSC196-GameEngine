@@ -36,7 +36,7 @@ bool Renderer::CreateWindow(std::string title, int width, int height)
 	}
 
 	// create renderer
-	m_renderer = SDL_CreateRenderer(m_window, -1, 0);
+	m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	return true;
 }
