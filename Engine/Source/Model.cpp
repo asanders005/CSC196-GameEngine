@@ -32,3 +32,19 @@ void Model::Draw(Renderer& renderer, const Transform& transform)
 		}
 	}
 }
+
+float Model::GetRadius()
+{
+	float radius = 0;
+
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		for (int j = 0; j < m_points[i].size(); j++)
+		{
+			float r = m_points[i][j].Length();
+			if (r > radius) radius = r;
+		}
+	}
+	
+	return radius;
+}

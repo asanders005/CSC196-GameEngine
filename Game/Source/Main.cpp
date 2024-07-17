@@ -98,15 +98,19 @@ int main(int argc, char* argv[])
 	Player* player = new Player(3000, 5, transform, model);
 	player->SetDamping(3.5f);
 	player->SetRDamping(2.5f);
-
+	player->SetTag("Player");
 	scene->AddActor(player);
 
 	Model* eModel = new Model{ shapes, Color{ 1, 1, 0 } };
-	Enemy* enemy = new Enemy(2500, Transform{ {300, 300 }, 0, 2 }, eModel);
+	Enemy* enemy = new Enemy(1500, Transform{ { RENDERER.GetWidth(), RENDERER.GetHeight() }, 0, 2}, eModel);
+	enemy->SetDamping(3.5f);
+	enemy->SetTag("Enemy");
 	scene->AddActor(enemy);
 
 	srand(time(0));
 	
+	float spawnTimer = 2;
+
 	// main
 	bool quit = false;
 	while (!quit)
@@ -132,6 +136,16 @@ int main(int argc, char* argv[])
 		if (INPUT.GetKeyPressed(SDL_SCANCODE_O)) AUDIO.PlaySound("clap.wav");*/
 		
 		// UPDATE
+		spawnTimer -= etime.GetDeltaTime();
+		if (spawnTimer <= 0)
+		{
+			Enemy* enemy = new Enemy(1500, Transform{ { RENDERER.GetWidth(), RENDERER.GetHeight() }, 0, 2 }, eModel);
+			enemy->SetDamping(3.5f);
+			enemy->SetTag("Enemy");
+			scene->AddActor(enemy);
+			spawnTimer = 2;
+		}
+
 		scene->Update(etime.GetDeltaTime());
 
 		Vector2 mousePosition = INPUT.GetMousePosition();

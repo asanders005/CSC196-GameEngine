@@ -13,6 +13,8 @@ public:
 
 	void SetRDamping(float damping) { m_rDamping = damping; }
 
+	void OnCollision(Actor* actor);
+
 private:
 	float m_speed = 0;
 	float m_rSpeed = 0;
