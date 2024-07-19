@@ -3,6 +3,7 @@
 #include "Color.h"
 #include <SDL.h>
 #include <string>
+#include <SDL_ttf.h>
 
 class Renderer
 {
@@ -30,6 +31,8 @@ public:
 
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }
+
+	friend class Text;
 
 private:
 	SDL_Window* m_window{ nullptr };

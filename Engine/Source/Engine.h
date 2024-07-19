@@ -19,6 +19,7 @@
 #define RENDERER g_engine.GetRenderer()
 #define INPUT g_engine.GetInput()
 #define AUDIO g_engine.GetAudio()
+#define TIME g_engine.GetTime()
 
 class Engine
 {
@@ -35,7 +36,15 @@ public:
 	Input& GetInput() { return *m_input; }
 	Audio& GetAudio() { return *m_audio; }
 
+	Time& GetTime() { return *m_time; }
+
+	bool IsQuit() { return quit; }
+
 private:
+	bool quit{ false };
+
+	Time* m_time{ nullptr };
+
 	Renderer* m_renderer{ nullptr };
 	Input* m_input{ nullptr };
 	Audio* m_audio{ nullptr };

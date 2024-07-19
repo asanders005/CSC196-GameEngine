@@ -35,6 +35,8 @@ namespace Math
 	template<typename T>
 	inline T Abs(T value) { return (value < 0) ? -value : value; }
 
+	inline float Powf(float value, float power) { return std::pow(value, power); }
+
 	template<typename T>
 	inline T Clamp(T v, T min, T max) { return (v < min) ? min : (v > max) ? max : v; }
 

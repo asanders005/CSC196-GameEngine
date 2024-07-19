@@ -22,4 +22,17 @@ private:
 	float m_rDamping = 0;
 
 	float m_fireTimer = 0;
+
+	/* Upgrades:
+	0 - Bullet Count
+	1 - Fire Rate
+	2 - Bullet Speed
+	3 - Bullet Damage
+	4 - Jet Size
+	5 - Jet Damage
+	6 - Shield
+	7 - HP
+	8 - Speed
+	9 - Turn Speed */
+	int m_upgrades[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 };

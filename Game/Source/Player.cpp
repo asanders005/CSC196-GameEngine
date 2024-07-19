@@ -3,14 +3,21 @@
 #include "Mathutils.h"
 #include "Bullet.h"
 #include "Scene.h"
+#include "GameData.h"
 #include <iostream>
 
 void Player::Update(float dt)
 {
 	// movement
 	float thrust = 0;
-	if (INPUT.GetKeyDown(SDL_SCANCODE_UP)) thrust = m_speed;
-	if (INPUT.GetKeyDown(SDL_SCANCODE_DOWN)) thrust = -m_speed;
+	if (INPUT.GetKeyDown(SDL_SCANCODE_UP)) 
+	{
+		thrust = m_speed;
+		Bullet* jet = new Bullet(0.0f, { {m_transform.position.x - 10, m_transform.position.y}, m_transform.rotation, 20 }, new Model{ GameData::playerJetPoints, {1,1,1} });
+		jet->SetLifespan(0.05);
+		jet->SetTag("Player");
+		m_scene->AddActor(jet);
+	}
 	if (INPUT.GetKeyDown(SDL_SCANCODE_LEFT)) m_rAccel -= m_rSpeed;
 	if (INPUT.GetKeyDown(SDL_SCANCODE_RIGHT)) m_rAccel += m_rSpeed;
 
