@@ -45,6 +45,7 @@ bool Renderer::CreateWindow(std::string title, int width, int height)
 
 	// create renderer
 	m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
 
 	return true;
 }

@@ -11,6 +11,7 @@ public:
 		Game,
 		Pause,
 		LevelUp,
+		UpgradeSelection,
 		PlayerDead,
 		GameOver
 	};
@@ -31,8 +32,11 @@ private:
 	float m_spawnTimer = 0;
 	float m_spawnTime = 0;
 
-	int m_level = 0;
-	int m_exp = 0;
 	int m_expBase = 0;
 	float m_expScale = 0;
+
+	int m_upgradesSelected[3] = { 0, 0, 0 };
+	int m_upgradeHover = 0;
+
+	int m_gamestage = 0;
 };

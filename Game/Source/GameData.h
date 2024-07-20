@@ -8,4 +8,8 @@ namespace GameData
 	extern const std::vector<std::vector<Vector2>> playerJetPoints;
 
 	extern const std::vector<std::vector<Vector2>> rammerShipPoints;
+	
+	//extern const std::vector<std::vector<Vector2>> upgradePoints;
+
+
 }

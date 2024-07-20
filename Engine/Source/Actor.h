@@ -24,16 +24,24 @@ public:
 
 	virtual void OnCollision(Actor* actor) = 0;
 
+	virtual void SetHP(int hp) { m_hp = hp; }
+
+	void SetDamage(int damage) { m_damage = damage; }
+	int GetDamage() const { return m_damage; }
+
 	friend class Scene;
 
 protected:
 	std::string m_tag;
+	int m_hp = 0;
 	bool m_destroyed = false;
 	float m_lifespan = -1;
 
 	Transform m_transform;
 	Vector2 m_velocity{ 0, 0 };
 	float m_damping = 0;
+
+	int m_damage;
 
 	Model* m_model{ nullptr };
 	Scene* m_scene{ nullptr };

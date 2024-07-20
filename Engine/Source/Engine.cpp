@@ -9,7 +9,7 @@ bool Engine::Initialize()
 	m_audio = new Audio();
 
 	m_renderer->Initialize();
-	m_renderer->CreateWindow("Game Engine", 1500, 900);
+	m_renderer->CreateWindow("Andromeda Defense", 1500, 900);
 	m_input->Initialize();
 	m_audio->Initialize();
 

@@ -1,13 +1,7 @@
 #include "Engine.h"
-#include "Player.h"
-#include "Scene.h"
-#include "Enemy.h"
-#include "GameData.h"
 #include "AndromedaDefense.h"
 
 #include <iostream>
-#include <vector>
-#include <time.h>
 
 int main(int argc, char* argv[])
 {

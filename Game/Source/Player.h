@@ -15,6 +15,21 @@ public:
 
 	void OnCollision(Actor* actor);
 
+	int GetHP() const { return m_hp; }
+	int GetHPMax() const { return m_maxHP; }
+	void SetHP(int hp) { m_maxHP = hp; Actor::SetHP(hp); }
+
+	void AddExp(int exp) { m_exp += exp; }
+	int GetExp() const { return m_exp; }
+	void ResetExp() { m_exp = 0; }
+
+	int GetLevel() const { return m_level; }
+	void LevelUp() { m_level++; }
+
+	int GetUpgrade(int index) const { return m_upgrades[index]; }
+	int GetUpgradeLimit(int index) const { return m_upgradeLimit[index]; }
+	void Upgrade(int index) { m_upgrades[index]++; }
+
 private:
 	float m_speed = 0;
 	float m_rSpeed = 0;
@@ -23,16 +38,23 @@ private:
 
 	float m_fireTimer = 0;
 
+	int m_maxHP = 0;
+
 	/* Upgrades:
-	0 - Bullet Count
-	1 - Fire Rate
-	2 - Bullet Speed
-	3 - Bullet Damage
-	4 - Jet Size
-	5 - Jet Damage
-	6 - Shield
-	7 - HP
-	8 - Speed
-	9 - Turn Speed */
-	int m_upgrades[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	0 - Fire Rate (5)
+	1 - Bullet Count (5)
+	2 - Bullet Speed (5)
+	3 - Bullet Size (3)
+	4 - Bullet Damage (3)
+	5 - Jet Size (3)
+	6 - Jet Damage (3)
+	7 - Shield (3)
+	8 - HP (5)
+	9 - Speed (3)
+	10 - Turn Speed (3) */
+	int m_upgrades[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	int m_upgradeLimit[11] = { 5, 5, 5, 3, 3, 3, 3, 3, 5, 3, 3 };
+
+	int m_level = 1;
+	int m_exp = 0;
 };

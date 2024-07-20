@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <string>
 
 class Renderer;
 class Actor;
@@ -13,6 +14,8 @@ public:
 	void Draw(Renderer& renderer);
 
 	void AddActor(Actor* actor);
+
+	void EraseAll(std::string tag);
 
 	template<typename T>
 	T* GetActor();

@@ -13,10 +13,10 @@ void Player::Update(float dt)
 	if (INPUT.GetKeyDown(SDL_SCANCODE_UP)) 
 	{
 		thrust = m_speed;
-		Bullet* jet = new Bullet(0.0f, { {m_transform.position.x - 10, m_transform.position.y}, m_transform.rotation, 20 }, new Model{ GameData::playerJetPoints, {1,1,1} });
+		/*Bullet* jet = new Bullet(0.0f, { Vector2{m_transform.position.x - (10 * m_transform.scale), m_transform.position.y}, m_transform.rotation, 4}, new Model{GameData::playerJetPoints, {1,1,1}});
 		jet->SetLifespan(0.05);
 		jet->SetTag("Player");
-		m_scene->AddActor(jet);
+		m_scene->AddActor(jet);*/
 	}
 	if (INPUT.GetKeyDown(SDL_SCANCODE_LEFT)) m_rAccel -= m_rSpeed;
 	if (INPUT.GetKeyDown(SDL_SCANCODE_RIGHT)) m_rAccel += m_rSpeed;
@@ -50,6 +50,7 @@ void Player::Update(float dt)
 		Transform transform{ m_transform.position, m_transform.rotation };
 
 		Bullet* bullet = new Bullet(500, transform, model);
+		bullet->SetDamage(1);
 		bullet->SetLifespan(1);
 		bullet->SetTag("Player");
 		m_scene->AddActor(bullet);
@@ -60,5 +61,9 @@ void Player::Update(float dt)
 
 void Player::OnCollision(Actor* actor)
 {
-	if (actor->GetTag() == "Enemy") m_destroyed = true;
+	if (actor->GetTag() == "Enemy")
+	{
+		m_hp -= actor->GetDamage();
+		if (m_hp <= 0) m_destroyed = true;
+	}
 }
