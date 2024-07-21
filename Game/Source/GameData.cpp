@@ -61,13 +61,29 @@ namespace GameData
 		}
 	};
 
-	const std::vector<std::vector<Vector2>> playerJetPoints
+	const std::vector<std::vector<Vector2>> playerBulletPoints
 	{
 		{
-			{0,1},
-			{-2,2},
-			{-2,-2},
-			{0,-1}
+			{ 5, 0 },
+			{ -5, -4 },
+			{ -3, 0 },
+			{ -5, 4 },
+			{ 5, 0 }
+		}
+	};
+
+	const std::vector<std::vector<Vector2>> playerShieldPoints
+	{
+		{
+			{ 14, 8 },
+			{ 14, -8 },
+			{ 8, -14 },
+			{ -8, -14 },
+			{ -14, -8 },
+			{ -14, 8 },
+			{ -8, 14 },
+			{ 8, 14 },
+			{ 14, 8 },
 		}
 	};
 
@@ -120,5 +136,21 @@ namespace GameData
 			{ 0, 3 },
 			{ -1, 3 }
 		}
+	};
+
+	const std::vector<std::string> upgradeText
+	{
+		"Faster Firing",
+		"Extra Gun",
+		"Faster Bullets",
+		"Bigger Bullets",
+		"Stronger Bullets",
+		"Faster Shield",
+		"Stronger Hull",
+		"Faster Flying",
+		"Faster Turning",
+		"Hull Repair",
+		"Points",
+		"Destroy Enemies"
 	};
 }

@@ -50,6 +50,14 @@ void Text::Draw(Renderer& renderer, int x, int y)
 	SDL_QueryTexture(m_texture, nullptr, nullptr, &width, &height);
 
 	// copy the texture onto the renderer
-	SDL_Rect rect{ x - (width / 2), y - (height / 2), width, height};
-	SDL_RenderCopy(renderer.m_renderer, m_texture, NULL, &rect);
+	if (m_centered)
+	{
+		SDL_Rect rect{ x - (width / 2), y - (height / 2), width, height };
+		SDL_RenderCopy(renderer.m_renderer, m_texture, NULL, &rect);
+	}
+	else
+	{
+		SDL_Rect rect{ x, y, width, height };
+		SDL_RenderCopy(renderer.m_renderer, m_texture, NULL, &rect);
+	}
 }

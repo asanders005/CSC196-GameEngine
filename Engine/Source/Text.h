@@ -10,7 +10,7 @@ class Text
 {
 public:
 	Text() = default;
-	Text(Font* font) : m_font{ font } {}
+	Text(Font* font, bool centered = false) : m_font{ font }, m_centered{ centered } {}
 	~Text();
 
 	bool Create(Renderer& renderer, const std::string& text, const Color& color);
@@ -19,4 +19,5 @@ public:
 private:
 	Font* m_font{ nullptr };
 	SDL_Texture* m_texture{ nullptr };
+	bool m_centered = false;
 };

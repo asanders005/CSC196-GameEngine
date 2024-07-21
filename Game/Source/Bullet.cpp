@@ -8,5 +8,5 @@ void Bullet::Update(float dt)
 
 void Bullet::OnCollision(Actor* actor)
 {
-
+	if (actor->GetTag() != m_tag) m_destroyed = true;
 }

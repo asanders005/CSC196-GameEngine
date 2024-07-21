@@ -27,6 +27,7 @@ protected:
 
 	Font* m_font{ nullptr };
 	Font* m_lgFont{ nullptr };
+	Font* m_altFont{ nullptr };
 	std::map<std::string, Text*> m_text;
 
 	Engine* m_engine{ nullptr };

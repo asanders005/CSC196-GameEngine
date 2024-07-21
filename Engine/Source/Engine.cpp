@@ -31,7 +31,7 @@ void Engine::Update()
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)	quit = true;
-		if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) quit = true;
+		if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_LALT && event.key.keysym.sym == SDLK_F4) quit = true;
 	}
 
 	m_time->Tick();

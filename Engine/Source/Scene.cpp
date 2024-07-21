@@ -20,7 +20,6 @@ void Scene::Update(float dt)
 	// to the end of the range. The algorithm returns an iterator to the beginning of the "removed" range,
 	// which is the new logical end of the container.
 	// m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [](Actor* actor) { return actor->m_destroyed; }), m_actors.end());
-	std::erase_if(m_actors, [](Actor* actor) { return actor->m_destroyed; });
 	
 	//collision
 	for (Actor* actor1 : m_actors)
@@ -40,6 +39,7 @@ void Scene::Update(float dt)
 			}
 		}
 	}
+	std::erase_if(m_actors, [](Actor* actor) { return actor->m_destroyed; });
 }
 
 void Scene::Draw(Renderer& renderer)

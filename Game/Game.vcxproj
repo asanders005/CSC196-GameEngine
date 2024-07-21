@@ -149,6 +149,8 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\AndromedaDefense.cpp" />
+    <ClCompile Include="Source\Shield.cpp" />
+    <ClCompile Include="Source\Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
@@ -161,6 +163,8 @@
     <ClInclude Include="Source\GameData.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\AndromedaDefense.h" />
+    <ClInclude Include="Source\Shield.h" />
+    <ClInclude Include="Source\Shooter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

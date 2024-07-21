@@ -37,24 +37,25 @@ private:
 	float m_rDamping = 0;
 
 	float m_fireTimer = 0;
+	float m_shieldTimer = 0;
 
 	int m_maxHP = 0;
 
 	/* Upgrades:
 	0 - Fire Rate (5)
-	1 - Bullet Count (5)
+	1 - Bullet Count (4)
 	2 - Bullet Speed (5)
 	3 - Bullet Size (3)
 	4 - Bullet Damage (3)
-	5 - Jet Size (3)
-	6 - Jet Damage (3)
-	7 - Shield (3)
-	8 - HP (5)
-	9 - Speed (3)
-	10 - Turn Speed (3) */
-	int m_upgrades[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	int m_upgradeLimit[11] = { 5, 5, 5, 3, 3, 3, 3, 3, 5, 3, 3 };
+	5 - Shield (3)
+	6 - HP (5)
+	7 - Speed (3)
+	8 - Turn Speed (3) */
+	int m_upgrades[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	int m_upgradeLimit[9] = { 5, 4, 5, 3, 3, 3, 5, 3, 3 };
 
 	int m_level = 1;
 	int m_exp = 0;
+
+	float m_iTime = 0;
 };
