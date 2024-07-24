@@ -39,6 +39,12 @@
     <ClCompile Include="Source\Shooter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Pickup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PointPickup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Player.h">
@@ -60,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Shooter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pickup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PointPickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

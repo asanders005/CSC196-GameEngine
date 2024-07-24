@@ -59,4 +59,3 @@ inline Vector2 Vector2::Rotate(float radians) const
 
 	return { x_, y_ };
 }
-

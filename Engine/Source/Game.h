@@ -1,6 +1,4 @@
 #pragma once
-#include "Text.h"
-#include <map>
 
 class Engine;
 class Renderer;
@@ -22,13 +20,13 @@ public:
 	int GetScore() const { return m_score; }
 	void AddPoints(int points) { m_score += points; }
 
+	int GetLives() const { return m_lives; }
+	void SetLives(int lives) { m_lives = lives; }
+
 protected:
 	int m_score = 0;
 
-	Font* m_font{ nullptr };
-	Font* m_lgFont{ nullptr };
-	Font* m_altFont{ nullptr };
-	std::map<std::string, Text*> m_text;
+	int m_lives = 0;
 
 	Engine* m_engine{ nullptr };
 	Scene* m_scene{ nullptr };

@@ -4,6 +4,9 @@
 #include "Model.h"
 #include "GameData.h"
 #include "Bullet.h"
+#include "Engine.h"
+#include "AndromedaDefense.h"
+#include "Random.h"
 #include <iostream>
 
 void Shooter::Update(float dt)
@@ -25,11 +28,11 @@ void Shooter::Update(float dt)
 			Model* model = new Model{ GameData::playerBulletPoints, Color{ 1, 1, 0 } };
 			Transform transform{ m_transform.position, m_transform.rotation };
 
-			Bullet* bullet = new Bullet(m_bulletSpeed, transform, model);
+			auto bullet = std::make_unique<Bullet>(m_bulletSpeed, transform, model);
 			bullet->SetDamage(m_damage);
 			bullet->SetLifespan(4);
 			bullet->SetTag("Enemy");
-			m_scene->AddActor(bullet);
+			m_scene->AddActor(std::move(bullet));
 		}
 		//m_velocity = Vector2::Clamp(m_velocity, { -300, -300 }, { 300, 300 });
 	}
@@ -44,7 +47,25 @@ void Shooter::OnCollision(Actor* actor)
 		m_hp -= actor->GetDamage();
 		if (m_hp <= 0)
 		{
-			m_player->AddExp(m_expValue);
+			AndromedaDefense* game = dynamic_cast<AndromedaDefense*>(m_scene->GetGame());
+			if (m_player && !dynamic_cast<Player*>(actor))
+			{
+				game->AddPoints(500);
+				m_player->AddExp(m_expValue);
+			}
+			if (random(100) >= 95)
+			{
+				if (random(2) == 1)
+				{
+					game->SpawnHealthPickup(m_transform.position);
+				}
+				else
+				{
+					game->SpawnPointPickup(m_transform.position);
+				}
+			}
+			AUDIO.PlaySound("ShipExplode.wav");
+			game->AddExplosion(m_transform.position, m_model->GetColor());
 			m_destroyed = true;
 		}
 	}

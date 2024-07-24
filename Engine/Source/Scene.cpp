@@ -4,59 +4,70 @@
 
 void Scene::Update(float dt)
 {
-	for (Actor* actor : m_actors)
+	for (auto& actor : m_actors)
 	{
 		actor->Update(dt);
 	}
-
-	/*auto iter = m_actors.begin();
-	while (iter != m_actors.end())
+	/*for (Particle p : m_particles)
 	{
-		iter = ((*iter)->m_destroyed) ? m_actors.erase(iter) : ++iter;
+		p.Update(dt);
 	}*/
-
-	// The std::remove_if algorithm reorders the elements in the range [m_actors.begin(), m_actors.end()]
-	// such that the elements that satisfy the predicate (i.e., those that should be removed) are moved
-	// to the end of the range. The algorithm returns an iterator to the beginning of the "removed" range,
-	// which is the new logical end of the container.
-	// m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [](Actor* actor) { return actor->m_destroyed; }), m_actors.end());
 	
 	//collision
-	for (Actor* actor1 : m_actors)
+	for (auto& actor1 : m_actors)
 	{
-		for (Actor* actor2 : m_actors)
+		for (auto& actor2 : m_actors)
 		{
-			if (actor1 == actor2) continue;
+			if (actor1 == actor2 || (actor1->m_destroyed || actor2->m_destroyed)) continue;
 
 			Vector2 direction = actor1->GetTransform().position - actor2->GetTransform().position;
 			float distance = direction.Length();
-			float radius = (actor1->m_model->GetRadius() * actor1->m_transform.scale) + (actor2->m_model->GetRadius() * actor2->m_transform.scale);
+			float radius = actor1->GetRadius() + actor2->GetRadius();
 
 			if (distance <= radius)
 			{
-				actor1->OnCollision(actor2);
-				actor2->OnCollision(actor1);
+				actor1->OnCollision(actor2.get());
+				actor2->OnCollision(actor1.get());
 			}
 		}
 	}
-	std::erase_if(m_actors, [](Actor* actor) { return actor->m_destroyed; });
+	std::erase_if(m_actors, [](auto& actor) { return actor->m_destroyed; });
 }
 
 void Scene::Draw(Renderer& renderer)
 {
-	for (Actor* actor : m_actors)
+	for (auto& actor : m_actors)
 	{
 		actor->Draw(renderer);
 	}
+	/*for (Particle p : m_particles)
+	{
+		p.Draw(renderer);
+	}*/
 }
 
-void Scene::AddActor(Actor* actor)
+void Scene::AddActor(std::unique_ptr<Actor> actor)
 {
 	actor->m_scene = this;
-	m_actors.push_back(actor);
+	m_actors.push_back(std::move(actor));
 }
 
-void Scene::EraseAll(std::string tag)
+//void Scene::AddParticle(Vector2 position, Vector2 velocity, float lifespan, Color color)
+//{
+//	m_particles.push_back(Particle{ position, velocity, lifespan, color.ToInt(color.r), color.ToInt(color.g), color.ToInt(color.b) });
+//}
+//
+//void Scene::ClearParticles()
+//{
+//	m_particles.clear();
+//}
+
+void Scene::RemoveAll()
 {
-	m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [&](Actor* actor) { return actor->GetTag() == tag; }), m_actors.end());
+	m_actors.clear();
+}
+
+void Scene::RemoveAll(std::string tag)
+{
+	m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [&](auto& actor) { return actor->GetTag() == tag; }), m_actors.end());
 }

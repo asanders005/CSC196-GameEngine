@@ -11,9 +11,9 @@ public:
 	Shooter(const Transform& transform, Model* model) : Enemy{ transform, model } {}
 	Shooter(float speed, const Transform& transform, Model* model) : Enemy{ transform, model }, m_speed{ speed } {}
 
-	virtual void Update(float dt);
+	virtual void Update(float dt) override;
 
-	virtual void OnCollision(Actor* actor);
+	virtual void OnCollision(Actor* actor) override;
 
 	void SetFireTime(float time) { m_fireTime = time; m_fireTimer = m_fireTime; }
 	void SetFireRange(float range) { m_fireRange = range; }

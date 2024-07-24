@@ -1,9 +1,9 @@
 #pragma once
 #include "Transform.h"
+#include "Model.h"
 #include <string>
 
 class Scene;
-class Model;
 
 class Actor
 {
@@ -23,6 +23,7 @@ public:
 	const std::string& GetTag() { return m_tag; }
 
 	virtual void OnCollision(Actor* actor) = 0;
+	float GetRadius() { return (m_model) ? m_model->GetRadius() * m_transform.scale : 0; }
 
 	virtual void SetHP(int hp) { m_hp = hp; }
 
@@ -41,7 +42,7 @@ protected:
 	Vector2 m_velocity{ 0, 0 };
 	float m_damping = 0;
 
-	int m_damage;
+	int m_damage = 0;
 
 	Model* m_model{ nullptr };
 	Scene* m_scene{ nullptr };

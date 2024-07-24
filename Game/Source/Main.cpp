@@ -18,10 +18,13 @@ int main(int argc, char* argv[])
 		RENDERER.SetColor(0, 0, 0, 0);
 		RENDERER.BeginFrame();
 
+		PS.Draw(RENDERER);
 		game->Draw(RENDERER);
 
 		RENDERER.EndFrame();
 	}
+
+	g_engine.Shutdown();
 
 	return 0;
 }

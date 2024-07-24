@@ -147,8 +147,10 @@
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\GameData.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Pickup.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\AndromedaDefense.cpp" />
+    <ClCompile Include="Source\PointPickup.cpp" />
     <ClCompile Include="Source\Shield.cpp" />
     <ClCompile Include="Source\Shooter.cpp" />
   </ItemGroup>
@@ -161,8 +163,10 @@
     <ClInclude Include="Source\Bullet.h" />
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\GameData.h" />
+    <ClInclude Include="Source\Pickup.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\AndromedaDefense.h" />
+    <ClInclude Include="Source\PointPickup.h" />
     <ClInclude Include="Source\Shield.h" />
     <ClInclude Include="Source\Shooter.h" />
   </ItemGroup>

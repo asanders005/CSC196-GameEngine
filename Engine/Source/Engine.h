@@ -11,15 +11,18 @@
 
 #include "Model.h"
 #include "Particle.h"
+#include "ParticleSystem.h"
 #include "Transform.h"
 
-
+#include <fmod.h>
 #include <SDL.h>
+#include <memory>
 
 #define RENDERER g_engine.GetRenderer()
 #define INPUT g_engine.GetInput()
 #define AUDIO g_engine.GetAudio()
 #define TIME g_engine.GetTime()
+#define PS g_engine.GetPS()
 
 class Engine
 {
@@ -35,6 +38,8 @@ public:
 	Renderer& GetRenderer() { return *m_renderer; }
 	Input& GetInput() { return *m_input; }
 	Audio& GetAudio() { return *m_audio; }
+	ParticleSystem& GetPS() { return *m_particleSystem; }
+	void SetParticlesActive(bool active) { m_particlesActive = active; }
 
 	Time& GetTime() { return *m_time; }
 
@@ -43,11 +48,14 @@ public:
 private:
 	bool quit{ false };
 
-	Time* m_time{ nullptr };
+	std::unique_ptr<Time> m_time;
 
-	Renderer* m_renderer{ nullptr };
-	Input* m_input{ nullptr };
-	Audio* m_audio{ nullptr };
+	std::unique_ptr<Renderer> m_renderer;
+	std::unique_ptr<Input> m_input;
+	std::unique_ptr<Audio> m_audio;
+
+	bool m_particlesActive = true;
+	std::unique_ptr<ParticleSystem> m_particleSystem;
 };
 
 extern Engine g_engine;

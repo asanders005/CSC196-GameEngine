@@ -7,18 +7,18 @@
 #include "GameData.h"
 #include "Font.h"
 #include "Text.h"
+#include "PointPickup.h"
 #include <iostream>
+#include <fstream>
 
 bool AndromedaDefense::Initialize()
 {
-	m_scene = new Scene();
+	m_scene = new Scene(this);
 
 	m_font = new Font();
 	m_font->Load("pdark.ttf", 20);
 	m_lgFont = new Font();
 	m_lgFont->Load("pdark.ttf", 50);
-	m_altFont = new Font();
-	m_altFont->Load("deathStar.ttf", 50);
 
 	srand(time(0));
 
@@ -49,6 +49,7 @@ void AndromedaDefense::Update(float dt)
 		{
 			m_text.erase("title");
 			m_text.erase("startTxt");
+			AUDIO.PlaySound("GameStart.wav");
 			m_state = eState::StartGame;
 		}
 		break;
@@ -59,6 +60,11 @@ void AndromedaDefense::Update(float dt)
 
 		m_expBase = 10;
 		m_expScale = 1.1f;
+
+		for (int i = 0; i < sizeof(m_upgradeable); i++)
+		{
+			m_upgradeable[i] = true;
+		}
 
 		m_gamestage = 1;
 
@@ -78,8 +84,8 @@ void AndromedaDefense::Update(float dt)
 			int seconds = (int)m_gameTime % 60;
 			int minutes = (int)m_gameTime / 60;
 			std::stringstream timer;
-			timer << minutes << ":" << seconds;
-			m_text.emplace("timer", new Text(m_altFont, true));
+			timer << minutes << " " << seconds;
+			m_text.emplace("timer", new Text(m_lgFont, true));
 			m_text["timer"]->Create(RENDERER, timer.str().c_str(), {1, 1, 1});
 		}
 		if (m_text.find("score") == m_text.end())
@@ -102,9 +108,9 @@ void AndromedaDefense::Update(float dt)
 		m_spawnTimer -= dt;
 		if (m_spawnTimer <= 0)
 		{
-			if (m_gamestage > 3)
+			if (m_gamestage >= 2)
 			{
-				for (int i = 0; i < random(1, m_gamestage * 3); i++)
+				for (int i = 0; i < random(m_gamestage - 1, m_gamestage * 2); i++)
 				{
 					if (random(10) == 3)
 					{
@@ -120,6 +126,7 @@ void AndromedaDefense::Update(float dt)
 			{
 				for (int i = 0; i < random(1, m_gamestage * 3); i++)
 				{
+					//SpawnShooter();
 					SpawnRammer();
 				}
 			}
@@ -134,16 +141,19 @@ void AndromedaDefense::Update(float dt)
 			{
 				m_scene->GetActor<Player>()->ResetExp();
 				m_scene->GetActor<Player>()->LevelUp();
+				AUDIO.PlaySound("LevelUp.wav");
 				//std::cout << "Level Up \n";
 				m_state = eState::LevelUp;
 			}
-			if (m_scene->GetActor<Player>()->GetLevel() / 5 > m_gameTime / 60)
+			if (m_scene->GetActor<Player>()->GetLevel() / 4 > m_gameTime / 180)
 			{
-				m_gamestage = (m_scene->GetActor<Player>()->GetLevel() / 5) + 1;
+				//std::cout << "Player Gamestage: " << m_gamestage << std::endl;
+				m_gamestage = (m_scene->GetActor<Player>()->GetLevel() / 4) + 1;
 			}
 			else
 			{
-				m_gamestage = (m_gameTime / 60) + 1;
+				//std::cout << "Time Gamestage: " << m_gamestage << std::endl;
+				m_gamestage = (m_gameTime / 180) + 1;
 			}
 		}
 		else
@@ -240,11 +250,6 @@ void AndromedaDefense::Update(float dt)
 			std::cout << std::endl;*/
 			m_state = eState::UpgradeSelection;
 		}
-		else
-		{
-			m_spawnTimer = 3;
-			m_state = eState::PlayerDead;
-		}
 		break;
 	case eState::UpgradeSelection:
 		if (m_scene->GetActor<Player>())
@@ -258,7 +263,7 @@ void AndromedaDefense::Update(float dt)
 				{
 				case 6:
 					m_scene->GetActor<Player>()->Upgrade(temp);
-					m_scene->GetActor<Player>()->SetHP(5 * (m_scene->GetActor<Player>()->GetUpgrade(6) + 1));
+					m_scene->GetActor<Player>()->SetMaxHP(5 * (m_scene->GetActor<Player>()->GetUpgrade(6) + 1));
 					break;
 				case 9:
 					m_scene->GetActor<Player>()->SetHP(m_scene->GetActor<Player>()->GetHPMax());
@@ -269,7 +274,7 @@ void AndromedaDefense::Update(float dt)
 					//std::cout << "Score Up \n";
 					break;
 				case 11:
-					m_scene->EraseAll("Enemy");
+					m_scene->RemoveAll("Enemy");
 					//std::cout << "Screen Clear \n";
 					break;
 				default:
@@ -289,27 +294,93 @@ void AndromedaDefense::Update(float dt)
 		}
 		break;
 	case eState::PlayerDead:
-		m_spawnTimer -= dt;
-		if (m_spawnTimer <= 0)
+		m_stateTimer -= dt;
+		if (m_stateTimer <= 0)
 		{
-			m_scene->EraseAll("Player");
-			m_scene->EraseAll("Enemy");
+			{
+				std::stringstream score;
+				score << "Your Score " << m_score;
+				if (m_text.find("finalScore") == m_text.end())
+				{
+					m_text.emplace("finalScore", new Text(m_font));
+					m_text["finalScore"]->Create(RENDERER, score.str().c_str(), { 1, 1, 1 });
+				}
+				int seconds = (int)m_gameTime % 60;
+				int minutes = (int)m_gameTime / 60;
+				std::stringstream time;
+				time << "Your Time " << minutes << " " << seconds;
+				if (m_text.find("finalTime") == m_text.end())
+				{
+					m_text.emplace("finalTime", new Text(m_font));
+					m_text["finalTime"]->Create(RENDERER, time.str().c_str(), { 1, 1, 1 });
+				}
+
+				std::ifstream input(m_recordFile);
+				if (input.is_open())
+				{
+					while (!input.eof())
+					{
+						if (!input.fail())
+						{
+							input >> m_highscore;
+							input >> m_hightime;
+						}
+					}
+					input.close();
+				}
+
+				m_highscore = (m_score > m_highscore) ? m_score : m_highscore;
+				m_hightime = (m_gameTime > m_hightime) ? m_gameTime : m_hightime;
+
+				std::stringstream highscore;
+				highscore << "Highscore " << m_highscore;
+				if (m_text.find("highscore") == m_text.end())
+				{
+					m_text.emplace("highscore", new Text(m_font));
+					m_text["highscore"]->Create(RENDERER, highscore.str().c_str(), { 1, 1, 1 });
+				}
+				std::stringstream hightime;
+				seconds = (int)m_hightime % 60;
+				minutes = (int)m_hightime / 60;
+				hightime << "Highest Time " << minutes << " " << seconds;
+				if (m_text.find("hightime") == m_text.end())
+				{
+					m_text.emplace("hightime", new Text(m_font));
+					m_text["hightime"]->Create(RENDERER, hightime.str().c_str(), { 1, 1, 1 });
+				}
+
+				std::ofstream output(m_recordFile, std::ofstream::out | std::ofstream::trunc);
+				if (output.is_open())
+				{
+					output << m_highscore << std::endl;
+					output << m_hightime;
+					output.close();
+				}
+				if (m_text.find("gameOver") == m_text.end())
+				{
+					m_text.emplace("gameOver", new Text(m_lgFont, true));
+					m_text["gameOver"]->Create(RENDERER, "Game Over", { 1, 1, 1 });
+				}
+				if (m_text.find("gameRestart") == m_text.end())
+				{
+					m_text.emplace("gameRestart", new Text(m_font, true));
+					m_text["gameRestart"]->Create(RENDERER, "Press Space to Restart", { 1, 1, 1 });
+				}
+			}
+			m_scene->RemoveAll();
+			PS.ClearParticles();
 			m_state = eState::GameOver;
 		}
 		break;
 	case eState::GameOver:
-		if (m_text.find("gameOver") == m_text.end())
-		{
-			m_text.emplace("gameOver", new Text(m_lgFont, true));
-			m_text["gameOver"]->Create(RENDERER, "Game Over", { 1, 1, 1 });
-		}
-		if (m_text.find("gameRestart") == m_text.end())
-		{
-			m_text.emplace("gameRestart", new Text(m_font, true));
-			m_text["gameRestart"]->Create(RENDERER, "Press Space to Restart", { 1, 1, 1 });
-		}
 		if (INPUT.GetKeyPressed(SDL_SCANCODE_SPACE))
 		{
+			m_text.erase("finalScore");
+			m_text.erase("finalTime");
+			m_text.erase("highscore");
+			m_text.erase("hightime");
+			m_text.erase("gameOver");
+			m_text.erase("gameRestart");
 			m_state = eState::StartGame;
 		}
 		break;
@@ -317,7 +388,12 @@ void AndromedaDefense::Update(float dt)
 		break;
 	}
 	
-	if (m_state == eState::Game || m_state == eState::PlayerDead) m_scene->Update(dt);
+	if (m_state == eState::Game || m_state == eState::PlayerDead)
+	{
+		m_engine->SetParticlesActive(true);
+		m_scene->Update(dt);
+	}
+	else m_engine->SetParticlesActive(false);
 }
 
 void AndromedaDefense::Draw(Renderer& renderer)
@@ -327,39 +403,63 @@ void AndromedaDefense::Draw(Renderer& renderer)
 	switch (m_state)
 	{
 	case eState::Title:
-		if (m_text.find("title") != m_text.end()) m_text["title"]->Draw(RENDERER, RENDERER.GetWidth() / 2, (int)(RENDERER.GetHeight() / 3));
-		if (m_text.find("startTxt") != m_text.end()) m_text["startTxt"]->Draw(RENDERER, RENDERER.GetWidth() / 2, (int)(RENDERER.GetHeight() / 3) * 2);
+		if (m_text.find("title") != m_text.end()) m_text["title"]->Draw(renderer, renderer.GetWidth() / 2, (int)(renderer.GetHeight() / 3));
+		if (m_text.find("startTxt") != m_text.end()) m_text["startTxt"]->Draw(renderer, renderer.GetWidth() / 2, (int)(renderer.GetHeight() / 3) * 2);
 		break;
 	case eState::Game:
-		if (m_text.find("timer") != m_text.end()) m_text["timer"]->Draw(RENDERER, RENDERER.GetWidth() / 2, 40);
-		if (m_text.find("score") != m_text.end()) m_text["score"]->Draw(RENDERER, 40, 40);
-		if (m_text.find("hp") != m_text.end()) m_text["hp"]->Draw(RENDERER, 40, 80);
+		if (m_text.find("timer") != m_text.end()) m_text["timer"]->Draw(renderer, renderer.GetWidth() / 2, 40);
+		if (m_text.find("score") != m_text.end()) m_text["score"]->Draw(renderer, 40, 40);
+		if (m_text.find("hp") != m_text.end()) m_text["hp"]->Draw(renderer, 40, 80);
 		break;
 	case eState::Pause:
 		renderer.SetColor({ 0.0f, 0.0f, 0.0f, 0.5f });
-		renderer.DrawRect(RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2, RENDERER.GetWidth(), RENDERER.GetHeight());
-		if (m_text.find("pause") != m_text.end()) m_text["pause"]->Draw(RENDERER, RENDERER.GetWidth() / 2, (int)(RENDERER.GetHeight() / 3));
+		renderer.DrawRect(renderer.GetWidth() / 2, renderer.GetHeight() / 2, renderer.GetWidth(), renderer.GetHeight());
+		if (m_text.find("pause") != m_text.end()) m_text["pause"]->Draw(renderer, renderer.GetWidth() / 2, (int)(renderer.GetHeight() / 3));
 		break;
 	case eState::UpgradeSelection:
 		renderer.SetColor({ 0.0f, 0.0f, 0.0f, 0.5f });
-		renderer.DrawRect(RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2, RENDERER.GetWidth(), RENDERER.GetHeight());
+		renderer.DrawRect(renderer.GetWidth() / 2, renderer.GetHeight() / 2, renderer.GetWidth(), renderer.GetHeight());
 		renderer.SetColor({ 1, 1, 1 });
-		renderer.DrawRect((RENDERER.GetWidth() / 4) * (m_upgradeHover + 1), RENDERER.GetHeight() / 2, 330, 730);
+		renderer.DrawRect((renderer.GetWidth() / 4) * (m_upgradeHover + 1), renderer.GetHeight() / 2, 330, 730);
 		renderer.SetColor({ 0, 0, 0 });
-		renderer.DrawRect(RENDERER.GetWidth() / 4, RENDERER.GetHeight() / 2, 300, 700);
-		renderer.DrawRect((RENDERER.GetWidth() / 4) * 2, RENDERER.GetHeight() / 2, 300, 700);
-		renderer.DrawRect((RENDERER.GetWidth() / 4) * 3, RENDERER.GetHeight() / 2, 300, 700);
+		renderer.DrawRect(renderer.GetWidth() / 4, renderer.GetHeight() / 2, 300, 700);
+		renderer.DrawRect((renderer.GetWidth() / 4) * 2, renderer.GetHeight() / 2, 300, 700);
+		renderer.DrawRect((renderer.GetWidth() / 4) * 3, renderer.GetHeight() / 2, 300, 700);
 		renderer.SetColor({ 1, 1, 1 });
-		if (m_text.find("upgrade0") != m_text.end()) m_text["upgrade0"]->Draw(RENDERER, RENDERER.GetWidth() / 4, (int)(RENDERER.GetHeight() / 2));
-		if (m_text.find("upgrade1") != m_text.end()) m_text["upgrade1"]->Draw(RENDERER, (RENDERER.GetWidth() / 4) * 2, (int)(RENDERER.GetHeight() / 2));
-		if (m_text.find("upgrade2") != m_text.end()) m_text["upgrade2"]->Draw(RENDERER, (RENDERER.GetWidth() / 4) * 3, (int)(RENDERER.GetHeight() / 2));
+		if (m_text.find("upgrade0") != m_text.end()) m_text["upgrade0"]->Draw(renderer, renderer.GetWidth() / 4, (int)(renderer.GetHeight() / 2));
+		if (m_text.find("upgrade1") != m_text.end()) m_text["upgrade1"]->Draw(renderer, (renderer.GetWidth() / 4) * 2, (int)(renderer.GetHeight() / 2));
+		if (m_text.find("upgrade2") != m_text.end()) m_text["upgrade2"]->Draw(renderer, (renderer.GetWidth() / 4) * 3, (int)(renderer.GetHeight() / 2));
 		break;
 	case eState::GameOver:
-		if (m_text.find("gameOver") != m_text.end()) m_text["gameOver"]->Draw(RENDERER, RENDERER.GetWidth() / 2, (int)(RENDERER.GetHeight() / 3));
-		if (m_text.find("gameRestart") != m_text.end()) m_text["gameRestart"]->Draw(RENDERER, RENDERER.GetWidth() / 2, (int)(RENDERER.GetHeight() / 3) * 2);
+		if (m_text.find("gameOver") != m_text.end()) m_text["gameOver"]->Draw(renderer, renderer.GetWidth() / 2, (int)(renderer.GetHeight() / 3));
+		if (m_text.find("finalScore") != m_text.end()) m_text["finalScore"]->Draw(renderer, (renderer.GetWidth() / 2) - 300, (int)((renderer.GetHeight() / 3) + 100));
+		if (m_text.find("finalTime") != m_text.end()) m_text["finalTime"]->Draw(renderer, (renderer.GetWidth() / 2) - 300, (int)((renderer.GetHeight() / 3) + 200));
+		if (m_text.find("highscore") != m_text.end()) m_text["highscore"]->Draw(renderer, (renderer.GetWidth() / 2) + 100, (int)((renderer.GetHeight() / 3) + 100));
+		if (m_text.find("hightime") != m_text.end()) m_text["hightime"]->Draw(renderer, (renderer.GetWidth() / 2) + 100, (int)((renderer.GetHeight() / 3) + 200));
+		if (m_text.find("gameRestart") != m_text.end()) m_text["gameRestart"]->Draw(renderer, renderer.GetWidth() / 2, (int)((renderer.GetHeight() / 3) * 2));
 		break;
 	default:
 		break;
+	}
+}
+
+void AndromedaDefense::OnPlayerDeath()
+{
+	m_lives--;
+	m_stateTimer = 3.0f;
+	//m_state = (m_lives == 0) ? eState::GameOver : eState::PlayerDead;
+	m_state = eState::PlayerDead;
+}
+
+void AndromedaDefense::AddExplosion(Vector2 position, Color color)
+{
+	for (int i = 0; i < random(1000, 3000); i++)
+	{
+		PS.AddParticle(Particle::Data{ position, randomOnUnitCircle() * randomf(1, 200), randomf(0.5f), color.ToInt(color.r), color.ToInt(color.g), color.ToInt(color.b), color.ToInt(color.a) });
+	}
+	for (int i = 0; i < random(1000, 2000); i++)
+	{
+		PS.AddParticle({position, randomOnUnitCircle() * randomf(1, 200), randomf(0.5f),  255, 130, 0, 255 });
 	}
 }
 
@@ -368,78 +468,93 @@ void AndromedaDefense::SpawnPlayer()
 	Model* model = new Model{ GameData::playerShipPoints, Color{ 1, 0, 1 } };
 	Transform transform{ {RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2}, 0, 3 };
 
-	Player* player = new Player(1000, 7.5, transform, model);
+	auto player = std::make_unique<Player>(1000, 7.5, transform, model);
 	player->SetDamping(3.5f);
 	player->SetRDamping(2.5f);
 	player->SetDamage(1);
-	player->SetHP(5);
+	player->SetMaxHP(5);
 	player->SetTag("Player");
-	m_scene->AddActor(player);
+	m_scene->AddActor(std::move(player));
 }
 
 void AndromedaDefense::SpawnRammer()
 {
 	Model* model = new Model{ GameData::rammerShipPoints, Color{ 1, 0, 0 } };
-	Enemy* enemy{ nullptr };
+	std::unique_ptr<Enemy> enemy{ nullptr };
 	switch (random(4))
 	{
 	case 0:
-		enemy = new Enemy(250 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), 0.0f}, 0, 4}, model);
+		enemy = std::make_unique<Enemy>(250 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), 0.0f}, 0, 4}, model);
 		break;
 	case 1:
-		enemy = new Enemy(250 * ((m_gamestage / 2) + 1), Transform{ { (float)RENDERER.GetWidth(), randomf(RENDERER.GetHeight()) }, 0, 4 }, model);
+		enemy = std::make_unique<Enemy>(250 * ((m_gamestage / 2) + 1), Transform{ { (float)RENDERER.GetWidth(), randomf(RENDERER.GetHeight()) }, 0, 4 }, model);
 		break;
 	case 2:
-		enemy = new Enemy(250 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), (float)RENDERER.GetHeight() }, 0, 4 }, model);
+		enemy = std::make_unique<Enemy>(250 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), (float)RENDERER.GetHeight() }, 0, 4 }, model);
 		break;
 	case 3:
-		enemy = new Enemy(250 * ((m_gamestage / 2) + 1), Transform{ { 0.0f, randomf(RENDERER.GetHeight()) }, 0, 4 }, model);
+		enemy = std::make_unique<Enemy>(250 * ((m_gamestage / 2) + 1), Transform{ { 0.0f, randomf(RENDERER.GetHeight()) }, 0, 4 }, model);
 		break;
 	default:
-		enemy = new Enemy(250 * ((m_gamestage / 2) + 1), Transform{ { RENDERER.GetWidth(), RENDERER.GetHeight() }, 0, 4 }, model);
+		enemy = std::make_unique<Enemy>(250 * ((m_gamestage / 2) + 1), Transform{ { RENDERER.GetWidth(), RENDERER.GetHeight() }, 0, 4 }, model);
 		break;
 	}
 	enemy->SetDamping(3.5f);
-	enemy->SetHP(m_gamestage);
-	enemy->SetDamage(m_gamestage);
-	//enemy->SetExpValue(m_scene->GetActor<Player>()->GetLevel());
-	enemy->SetExpValue(999);
+	enemy->SetHP(m_gamestage / 2);
+	enemy->SetDamage(((m_gamestage / 2) < 1) ? 1 : m_gamestage / 2);
+	enemy->SetExpValue(m_scene->GetActor<Player>()->GetLevel());
+	//enemy->SetExpValue(999);
 	enemy->SetTag("Enemy");
-	m_scene->AddActor(enemy);
+	m_scene->AddActor(std::move(enemy));
 }
 
 void AndromedaDefense::SpawnShooter()
 {
-	Model* model = new Model{ GameData::rammerShipPoints, Color{ 1, 1, 0 } };
-	Shooter* enemy{ nullptr };
+	Model* model = new Model{ GameData::shooterShipPoints, Color{ 1, 1, 0 } };
+	std::unique_ptr<Shooter> enemy{ nullptr };
 	switch (random(4))
 	{
 	case 0:
-		enemy = new Shooter(200 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), 0.0f}, 0, 4 }, model);
+		enemy = std::make_unique<Shooter>(200 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), 0.0f}, 0, 3.5f }, model);
 		break;
 	case 1:
-		enemy = new Shooter(200 * ((m_gamestage / 2) + 1), Transform{ { (float)RENDERER.GetWidth(), randomf(RENDERER.GetHeight()) }, 0, 4 }, model);
+		enemy = std::make_unique<Shooter>(200 * ((m_gamestage / 2) + 1), Transform{ { (float)RENDERER.GetWidth(), randomf(RENDERER.GetHeight()) }, 0, 3.5f }, model);
 		break;
 	case 2:
-		enemy = new Shooter(200 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), (float)RENDERER.GetHeight() }, 0, 4 }, model);
+		enemy = std::make_unique<Shooter>(200 * ((m_gamestage / 2) + 1), Transform{ { randomf(RENDERER.GetWidth()), (float)RENDERER.GetHeight() }, 0, 3.5f }, model);
 		break;
 	case 3:
-		enemy = new Shooter(200 * ((m_gamestage / 2) + 1), Transform{ { 0.0f, randomf(RENDERER.GetHeight()) }, 0, 4 }, model);
+		enemy = std::make_unique<Shooter>(200 * ((m_gamestage / 2) + 1), Transform{ { 0.0f, randomf(RENDERER.GetHeight()) }, 0, 3.5f }, model);
 		break;
 	default:
-		enemy = new Shooter(200 * ((m_gamestage / 2) + 1), Transform{ { RENDERER.GetWidth(), RENDERER.GetHeight() }, 0, 4 }, model);
+		enemy = std::make_unique<Shooter>(200 * ((m_gamestage / 2) + 1), Transform{ { RENDERER.GetWidth(), RENDERER.GetHeight() }, 0, 3.5f }, model);
 		break;
 	}
 	enemy->SetDamping(3.5f);
-	enemy->SetHP(m_gamestage);
-	enemy->SetDamage(m_gamestage);
+	enemy->SetHP(m_gamestage / 2);
+	enemy->SetDamage(m_gamestage / 2);
 
 	enemy->SetFireTime(3.0f / (m_gamestage / 4.0f));
 	enemy->SetFireRange(randomf(300, 600));
 	enemy->SetBulletSpeed(randomf(100, 200) * (m_gamestage / 2.0f));
 
-	//enemy->SetExpValue(m_scene->GetActor<Player>()->GetLevel());
-	enemy->SetExpValue(999);
+	enemy->SetExpValue(m_scene->GetActor<Player>()->GetLevel() * 2);
 	enemy->SetTag("Enemy");
-	m_scene->AddActor(enemy);
+	m_scene->AddActor(std::move(enemy));
+}
+
+void AndromedaDefense::SpawnHealthPickup(Vector2 location)
+{
+	Model* model = new Model{ GameData::healthPickupPoints, Color{ 0, 1, 0 } };
+	auto pickup = std::make_unique<Pickup>(Transform{ location, 0, 4 }, model);
+	pickup->SetTag("Pickup");
+	m_scene->AddActor(std::move(pickup));
+}
+
+void AndromedaDefense::SpawnPointPickup(Vector2 location)
+{
+	Model* model = new Model{ GameData::scorePickupPoints, Color{ 0.5f, 0.0f, 1.0f } };
+	auto pickup = std::make_unique<PointPickup>(Transform{ location, 0, 4 }, model);
+	pickup->SetTag("Pickup");
+	m_scene->AddActor(std::move(pickup));
 }

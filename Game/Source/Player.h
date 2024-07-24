@@ -17,7 +17,8 @@ public:
 
 	int GetHP() const { return m_hp; }
 	int GetHPMax() const { return m_maxHP; }
-	void SetHP(int hp) { m_maxHP = hp; Actor::SetHP(hp); }
+	void SetMaxHP(int hp) { m_maxHP = hp; Actor::SetHP(hp); }
+	void AddHP(int hp) { m_hp = Math::Clamp(m_hp + hp, 0, m_maxHP); }
 
 	void AddExp(int exp) { m_exp += exp; }
 	int GetExp() const { return m_exp; }

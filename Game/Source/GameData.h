@@ -10,6 +10,10 @@ namespace GameData
 	extern const std::vector<std::vector<Vector2>> playerShieldPoints;
 
 	extern const std::vector<std::vector<Vector2>> rammerShipPoints;
+	extern const std::vector<std::vector<Vector2>> shooterShipPoints;
+
+	extern const std::vector<std::vector<Vector2>> healthPickupPoints;
+	extern const std::vector<std::vector<Vector2>> scorePickupPoints;
 	
 	extern const std::vector<std::string> upgradeText;
 

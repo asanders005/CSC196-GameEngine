@@ -30,6 +30,7 @@
     <ClInclude Include="Source\Mathutils.h" />
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\Particle.h" />
+    <ClInclude Include="Source\ParticleSystem.h" />
     <ClInclude Include="Source\Random.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Scene.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Source\Input.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Particle.cpp" />
+    <ClCompile Include="Source\ParticleSystem.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\Text.cpp" />
@@ -119,7 +121,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl2.lib;sdl2main.lib;sdl2_ttf.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -146,7 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl2.lib;sdl2main.lib;sdl2_ttf.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -169,7 +171,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl2.lib;sdl2main.lib;sdl2_ttf.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -196,7 +198,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>sdl2.lib;sdl2main.lib;sdl2_ttf.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sdl2.lib;sdl2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
