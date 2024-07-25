@@ -11,7 +11,7 @@ void PointPickup::OnCollision(Actor* actor)
 		Player* player = dynamic_cast<Player*>(actor);
 		if (player)
 		{
-			AUDIO.PlaySound("Pickup");
+			AUDIO.PlaySound("Pickup.wav");
 			m_scene->GetGame()->AddPoints(500);
 			m_destroyed = true;
 		}

@@ -50,7 +50,7 @@ void Shooter::OnCollision(Actor* actor)
 			AndromedaDefense* game = dynamic_cast<AndromedaDefense*>(m_scene->GetGame());
 			if (m_player && !dynamic_cast<Player*>(actor))
 			{
-				game->AddPoints(500);
+				game->AddPoints(300);
 				m_player->AddExp(m_expValue);
 			}
 			if (random(100) >= 95)

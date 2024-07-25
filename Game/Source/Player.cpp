@@ -19,7 +19,7 @@ void Player::Update(float dt)
 	{
 		Particle::Data data
 		{
-			m_transform.position,
+			m_transform.position + (Vector2{(-9.0f * m_transform.scale), 0.0f}.Rotate(m_transform.rotation)),
 			Vector2{1,0}.Rotate(randomf(Math::DegToRad(130), Math::DegToRad(230))) * 50,
 			randomf(0.05f, 0.25f),
 			m_model->GetColor().ToInt(m_model->GetColor().r),
@@ -33,7 +33,7 @@ void Player::Update(float dt)
 	if (INPUT.GetKeyDown(SDL_SCANCODE_LEFT)) m_rAccel -= m_rSpeed * ((m_upgrades[8] / 2.0f) + 1.0f);
 	if (INPUT.GetKeyDown(SDL_SCANCODE_RIGHT)) m_rAccel += m_rSpeed * ((m_upgrades[8] / 2.0f) + 1.0f);
 
-	m_rAccel = Math::Clamp(m_rAccel, -450.0f, 450.0f);
+	//m_rAccel = Math::Clamp(m_rAccel, -450.0f, 450.0f);
 	m_transform.rotation += Math::DegToRad(m_rAccel) * dt;
 	m_rAccel *= 1.0f / (1.0f + m_rDamping * dt);
 
@@ -48,6 +48,7 @@ void Player::Update(float dt)
 	if (INPUT.GetKeyDown(SDL_SCANCODE_Z) && m_fireTimer <= 0)
 	{
 		m_fireTimer = 0.5f / (m_upgrades[0] + 1);
+		AUDIO.PlaySound("Shoot.wav");
 
 		// Fire at mouse
 		// Vector2 direction = INPUT.GetMousePosition() - m_transform.position;

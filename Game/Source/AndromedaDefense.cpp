@@ -468,7 +468,7 @@ void AndromedaDefense::SpawnPlayer()
 	Model* model = new Model{ GameData::playerShipPoints, Color{ 1, 0, 1 } };
 	Transform transform{ {RENDERER.GetWidth() / 2, RENDERER.GetHeight() / 2}, 0, 3 };
 
-	auto player = std::make_unique<Player>(1000, 7.5, transform, model);
+	auto player = std::make_unique<Player>(1000, 7.5f, transform, model);
 	player->SetDamping(3.5f);
 	player->SetRDamping(2.5f);
 	player->SetDamage(1);

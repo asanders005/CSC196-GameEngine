@@ -9,7 +9,7 @@ void Pickup::OnCollision(Actor* actor)
 		Player* player = dynamic_cast<Player*>(actor);
 		if (player)
 		{
-			AUDIO.PlaySound("Pickup");
+			AUDIO.PlaySound("Pickup.wav");
 			dynamic_cast<Player*>(actor)->AddHP(10);
 			m_destroyed = true;
 		}
